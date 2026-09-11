@@ -1,0 +1,9 @@
+{
+    Filter = {
+        Executables = (
+            "LiveProcess",
+            "LiveContainer",
+            "CytusII"
+        );
+    };
+}

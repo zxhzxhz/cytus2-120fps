@@ -1,0 +1,9 @@
+Package: com.zxhzx.cytus2-120fps
+Name: Cytus2 120FPS
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: Force Unity games (Cytus II) to render at up to 120Hz on ProMotion devices. Works in LiveContainer (ElleKit / rootless) and on jailbroken installs.
+Maintainer: zxhzx
+Author: zxhzx
+Section: Tweaks
+Depends: firmware (>= 14.0)

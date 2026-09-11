@@ -1,0 +1,49 @@
+name: Build Tweak
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    env:
+      THEOS: ${{ github.workspace }}/theos
+      SDK_NAME: iPhoneOS16.5.sdk
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install ldid xz dpkg || brew install ldid xz || true
+
+      - name: Install Theos
+        run: |
+          git clone --recursive --depth 1 https://github.com/theos/theos.git "$THEOS"
+          echo "THEOS=$THEOS" >> "$GITHUB_ENV"
+
+      - name: Install iOS SDK
+        run: |
+          mkdir -p "$THEOS/sdks"
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/theos/sdks.git /tmp/theos-sdks
+          cd /tmp/theos-sdks
+          git sparse-checkout set "$SDK_NAME"
+          cp -R "$SDK_NAME" "$THEOS/sdks/"
+          ls -la "$THEOS/sdks"
+
+      - name: Build rootless package
+        run: make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p out
+          find . -name '*.deb' -not -path './.theos/*' -exec cp {} out/ \;
+          find .theos -name '*.dylib' -exec cp {} out/ \;
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cytus2-120fps
+          path: out/*
+          if-no-files-found: error
