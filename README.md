@@ -107,7 +107,8 @@ FPS ≈ 119 link(fps=120, paused=0)
 | 没有日志、也没有 `已安装 hook` | tweak 没被加载：检查 dylib 路径 / ElleKit 过滤器 / LiveContainer 的 tweak 文件夹 |
 | `maximumFramesPerSecond=60`（设备确实是 ProMotion） | 系统闸门没开：主 bundle Info.plist 的 `CADisableMinimumFrameDurationOnPhone` 是 false。LiveContainer 会把 `CFBundleGetMainBundle()` 重定向到 guest app 的 bundle（`CytusII.app/Info.plist`，该键为 false）。把 Tweak.mm 里的 `NPL_MODIFY_ON_DISK_PLIST` 改成 `1` 重新编译安装（会破坏签名，TrollStore 环境没问题），或者在 Filza 里手动往 guest 的 Info.plist 加这个键 |
 | `FPS ≈ 60` 但 `maximumFramesPerSecond=120` | 把日志发我，需要进一步分析 |
-| 游戏设置里想手动对比 | 设置 → FPS Limit → `Unlimited`（游戏内建的 240fps 档，会被系统夹到 120） |
+| 游戏设置里想手动对比 | 本版本（5.2.18）设置界面里**没有** FPS 选项（代码还在，但 UI 没显示），所以只能靠这个 tweak |
+| iPad Pro | `CADisableMinimumFrameDurationOnPhone` 只在 iPhone 上生效，iPad 忽略该键 → iPad 上不存在系统闸门，`maximumFramesPerSecond` 应该直接是 120 |
 
 ---
 
