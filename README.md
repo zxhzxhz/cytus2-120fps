@@ -118,3 +118,24 @@ FPS ≈ 119 link(fps=120, paused=0)
   但手感/视觉变化请自行确认。
 - 过滤器默认对所有 Unity 游戏生效（LiveProcess 是通用宿主）。
   想只对 Cytus II 生效：把 `Tweak.mm` 里的 `NPL_ONLY_BUNDLEID` 改成 `@"com.rayark.cytus2"`。
+
+---
+
+## 更新记录
+
+### v1.1（修复启动闪退）
+
+v1.0 在 iPad Pro M4 / iPadOS 18.6.2 / LiveContainer 3.8.9 上会导致游戏闪退。v1.1 的处理：
+
+| 改动 | 原因 |
+|---|---|
+| `NPL_SYNC_ENGINE_FPS` 默认 **0**（关闭 il2cpp 同步） | 从「引擎自己的帧率通知」里再调 `Application.set_targetFrameRate` 会重入引擎的 SetTargetFramerate（很可能重复获取同一把锁）；而且渲染节拍由 display link 决定，这个同步本来就多余 |
+| `NPL_PATCH_INFOPLIST` 默认 **0**（不再改 CFBundle 内存字典） | 真机日志已确认 iPad 上 `maximumFramesPerSecond=120`，该键在 iPad 上被忽略，完全不需要动它 |
+| `NPL_HOOK_CADISPLAYLINK` 默认 **0**（不再 swizzle CADisplayLink） | 已用 xref 验证 `setPreferredFramesPerSecond:`/`setPreferredFrameRateRange:` 全二进制只在 `callbackFramerateChange:` 一处被调用，不必碰系统类 |
+| hook 仅在**主线程**安装 | v1.0 在后台队列里 swizzle，可能与主线程的引擎启动竞争 |
+| 日志改为**同步写盘** + 信号/异常处理器 | v1.0 是 async 日志，崩溃前几行会丢；现在崩溃会把信号 + 回溯写进同一个 `120fps.log` |
+| 一键禁用开关 `Documents/120fps.disable` | 放一个空文件即可让 tweak 完全跳过（用于确认闪退是否由 tweak 引起） |
+
+### v1.0
+
+初版。
