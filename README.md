@@ -30,18 +30,20 @@
 
 ## 2. 编译
 
-### 方式 A：GitHub Actions（Windows 用户推荐）
+这个仓库的根目录就是 Theos 工程（`Makefile` / `Tweak.mm` / `control` / `Cytus2120FPS.plist`），
+`.github/workflows/build.yml` 会在每次 push 时自动出包。
 
-1. 把 `tweak/` 目录推到一个 GitHub 仓库（`.github/workflows/build.yml` 已经写好）。
-2. Actions → Build Tweak → 跑完后在 Artifacts 下载 `cytus2-120fps`：
-   - `com.zxhzx.cytus2-120fps_1.0.0_iphoneos-arm64.deb` —— 越狱安装用
-   - `Cytus2120FPS.dylib` —— LiveContainer 的 tweak 文件夹用
+### 方式 A：GitHub Actions（已配置好，Windows 用户推荐）
+
+push 之后到 Actions → Build Tweak → 跑完在 Artifacts 里下载 `cytus2-120fps`：
+
+- `com.zxhzx.cytus2-120fps_1.0.0_iphoneos-arm64.deb` —— 越狱安装用（rootless，装到 `/var/jb/...`）
+- `Cytus2120FPS.dylib` —— LiveContainer 的 tweak 文件夹用
 
 ### 方式 B：macOS / Linux + Theos
 
 ```bash
 export THEOS=~/theos        # 已安装 Theos 和 iOS SDK
-cd tweak
 make package FINALPACKAGE=1 THEOS_PACKAGE_SCHEME=rootless
 # 产物: packages/*.deb
 # 裸 dylib: .theos/obj/arm64/Cytus2120FPS.dylib
